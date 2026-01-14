@@ -1,6 +1,6 @@
 # Repository Tree
 
-Generated on: `Wed Jan 14 03:54:18 UTC 2026`
+Generated on: `Wed Jan 14 03:59:37 UTC 2026`
 
 ## Directory Tree (Depth 8)
 ```
@@ -16,12 +16,13 @@ Generated on: `Wed Jan 14 03:54:18 UTC 2026`
 ├── test
 ├── eslint.config.js
 ├── hardhat.config.ts
+├── LICENSE
 ├── package-lock.json
 ├── package.json
 ├── README.md
 └── tsconfig.json
 
-7 directories, 9 files
+7 directories, 10 files
 ```
 
 ## Ignored Paths

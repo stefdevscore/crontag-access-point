@@ -1,57 +1,108 @@
-# Sample Hardhat 3 Beta Project (`mocha` and `ethers`)
+# crontag-access-point
 
-This project showcases a Hardhat 3 Beta project using `mocha` for tests and the `ethers` library for Ethereum interactions.
+Reference access enforcement contracts built on top of the **crontag protocol**.
 
-To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
+This repository provides a **minimal, explicit, non-authoritative policy layer**
+that demonstrates how access decisions can be enforced using protocol facts
+without introducing new authority, interpretation, or hidden policy.
 
-## Project Overview
+---
 
-This example project includes:
+## What This Repository Is
 
-- A simple Hardhat configuration file.
-- Foundry-compatible Solidity unit tests.
-- TypeScript integration tests using `mocha` and ethers.js
-- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
+`crontag-access-point` contains:
 
-## Usage
+- A **reference access point interface**
+- A **single canonical implementation (AccessPointV1)**
+- Supporting documentation and tests
 
-### Running Tests
+It demonstrates how applications can enforce access by **consuming**
+protocol primitives such as:
 
-To run all the tests in the project, execute the following command:
+- `AccessPassV1`
+- `AccessVerifierV1`
+- (optionally) `ContextControllerV1`
 
-```shell
-npx hardhat test
+This repository is **not part of the crontag protocol**.
+It is an example of how the protocol can be used.
+
+---
+
+## What This Repository Is Not
+
+This repository does **not**:
+
+- Issue access passes
+- Define pricing or payment logic
+- Verify that payment occurred
+- Infer legitimacy or authority
+- Act as a registry or directory
+- Provide metadata, reasons, or explanations
+- Enforce global policy
+- Introduce admin or governance roles
+
+All policy enforced here is **local, explicit, and opt-in**.
+
+---
+
+## Architecture Overview
+
+The crontag system is intentionally layered:
+
+```
+crontag-protocol
+  ├─ AccessPassV1        (immutable access facts)
+  ├─ ContextControllerV1 (issuance constraints)
+  └─ AccessVerifierV1    (canonical verification)
+
+crontag-access-point
+  └─ AccessPointV1       (local access enforcement)
+
+crontag-client
+  └─ UI / SDK / Indexer  (token discovery, UX, aggregation)
 ```
 
-You can also selectively run the Solidity or `mocha` tests:
+This repository lives **strictly in the policy layer**.
 
-```shell
-npx hardhat test solidity
-npx hardhat test mocha
-```
+---
 
-### Make a deployment to Sepolia
+## Design Philosophy
 
-This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
+Access points are:
 
-To run the deployment to a local chain:
+- **Consumers**, not authorities
+- **Deterministic**, not interpretive
+- **Stateless**, not mutable
+- **Replaceable**, not canonical
 
-```shell
-npx hardhat ignition deploy ignition/modules/Counter.ts
-```
+An access point answers one question only:
 
-To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+> “Given this token and this block state, should access be allowed here?”
 
-You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
+It does not answer _why_, _who is legitimate_, or _what something means_.
 
-To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
+---
 
-```shell
-npx hardhat keystore set SEPOLIA_PRIVATE_KEY
-```
+## Documentation
 
-After setting the variable, you can run the deployment with the Sepolia network:
+- `docs/DESIGN-ACCESS-POINT.md` — formal design rationale and constraints
+- `docs/REPO_TREE.md` — generated repository structure
 
-```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
-```
+These documents are **non-normative but constraining**.
+Implementations that diverge should do so explicitly.
+
+---
+
+## Status
+
+- No production guarantees
+- Reference implementation only
+- Versioned independently from `crontag-protocol`
+
+This repository exists to make **correct usage obvious**, not to define truth.
+
+---
+
+## License
+
+MIT — see `LICENSE`.
