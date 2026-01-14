@@ -1,11 +1,19 @@
 # Repository Tree
 
-Generated on: `Wed Jan 14 03:59:37 UTC 2026`
+Generated on: `Wed Jan 14 20:08:18 UTC 2026`
 
 ## Directory Tree (Depth 8)
 ```
 .
 ├── contracts
+│   ├── interfaces
+│   │   └── IAccessPoint.sol
+│   ├── vendor
+│   │   └── crontag-protocol
+│   │       ├── AccessPassV1.sol
+│   │       ├── AccessVerifierV1.sol
+│   │       └── ContextControllerV1.sol
+│   └── AccessPointV1.sol
 ├── docs
 │   ├── DESIGN-ACCESS-POINT.md
 │   └── REPO_TREE.md
@@ -14,6 +22,17 @@ Generated on: `Wed Jan 14 03:59:37 UTC 2026`
 ├── scripts
 │   └── repo-tree.sh
 ├── test
+│   ├── access-point
+│   │   ├── allow.test.ts
+│   │   ├── context-mismatch.test.ts
+│   │   ├── controller-mismatch.test.ts
+│   │   ├── expiration.test.ts
+│   │   ├── open-provenance.test.ts
+│   │   ├── tier-insufficient.test.ts
+│   │   └── tier-zero.test.ts
+│   └── helpers
+│       ├── setup.ts
+│       └── types.ts
 ├── eslint.config.js
 ├── hardhat.config.ts
 ├── LICENSE
@@ -22,7 +41,7 @@ Generated on: `Wed Jan 14 03:59:37 UTC 2026`
 ├── README.md
 └── tsconfig.json
 
-7 directories, 10 files
+12 directories, 24 files
 ```
 
 ## Ignored Paths
