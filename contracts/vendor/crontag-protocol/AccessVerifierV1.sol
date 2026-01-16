@@ -55,8 +55,8 @@ contract AccessVerifierV1 {
    *
    * @param user            Address attempting access
    * @param tokenId         AccessPassV1 tokenId
-   * @param requiredContext Required contextId (exact match)
-   * @param requiredTier    Minimum tier required
+   * @param requiredContext Required contextId (exact match, 0 = any)
+   * @param requiredTier    Minimum tier required (0 = any)
    */
   function verify(
     address user,
@@ -78,8 +78,8 @@ contract AccessVerifierV1 {
       tokenId
     );
 
-    // 3. Context match
-    if (data.contextId != requiredContext) {
+    // 3. Context match (0 = wildcard)
+    if (requiredContext != bytes32(0) && data.contextId != requiredContext) {
       return false;
     }
 
@@ -88,8 +88,8 @@ contract AccessVerifierV1 {
       return false;
     }
 
-    // 5. Tier requirement
-    if (data.tier < requiredTier) {
+    // 5. Tier requirement (0 = any tier)
+    if (requiredTier != 0 && data.tier < requiredTier) {
       return false;
     }
 
