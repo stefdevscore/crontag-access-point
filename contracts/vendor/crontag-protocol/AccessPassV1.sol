@@ -139,9 +139,16 @@ contract AccessPassV1 is ERC721 {
   }
 
   /* ---------------------------------------------------------------------
-   * Minting (ONLY authority-bearing function)
+   * Minting (ONLY authority-bearing functions)
    * ------------------------------------------------------------------ */
 
+  /**
+   * @notice
+   * Direct mint — mints to msg.sender.
+   *
+   * This function exists for users who mint directly
+   * without a router.
+   */
   function mint(
     bytes32 contextId,
     uint64 expiresAt,
@@ -151,7 +158,6 @@ contract AccessPassV1 is ERC721 {
   ) external payable returns (uint256 tokenId) {
     tokenId = ++_nextTokenId;
 
-    // Optional controller gate (issuance-only, declarative)
     if (controller != address(0)) {
       bool allowed = IContextController(controller).canMint(
         msg.sender,
@@ -160,7 +166,6 @@ contract AccessPassV1 is ERC721 {
       if (!allowed) revert ControllerRejected();
     }
 
-    // Write immutable pass facts
     _passData[tokenId] = PassData({
       contextId: contextId,
       expiresAt: expiresAt,
@@ -169,9 +174,49 @@ contract AccessPassV1 is ERC721 {
       controller: controller
     });
 
-    // Mint token to caller
     _safeMint(msg.sender, tokenId);
 
     emit AccessPassMinted(tokenId, msg.sender, contextId, controller);
+  }
+
+  /**
+   * @notice
+   * NEW — Router-safe mint.
+   *
+   * Allows trusted orchestration layers (e.g. IssuanceRouterV1)
+   * to mint directly to the end user without custody.
+   *
+   * This preserves:
+   * - immutability
+   * - controller purity
+   * - non-retroactivity
+   * - explicit recipients
+   */
+  function mintTo(
+    address to,
+    bytes32 contextId,
+    uint64 expiresAt,
+    uint32 tier,
+    bool transferable,
+    address controller
+  ) external payable returns (uint256 tokenId) {
+    tokenId = ++_nextTokenId;
+
+    if (controller != address(0)) {
+      bool allowed = IContextController(controller).canMint(to, contextId);
+      if (!allowed) revert ControllerRejected();
+    }
+
+    _passData[tokenId] = PassData({
+      contextId: contextId,
+      expiresAt: expiresAt,
+      tier: tier,
+      transferable: transferable,
+      controller: controller
+    });
+
+    _safeMint(to, tokenId);
+
+    emit AccessPassMinted(tokenId, to, contextId, controller);
   }
 }

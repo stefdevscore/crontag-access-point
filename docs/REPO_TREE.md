@@ -1,28 +1,33 @@
 # Repository Tree
 
-Generated on: `Wed Jan 14 20:08:18 UTC 2026`
+Generated on: `Thu Jan 15 23:11:19 UTC 2026`
 
 ## Directory Tree (Depth 8)
 ```
 .
 ├── contracts
 │   ├── interfaces
-│   │   └── IAccessPoint.sol
+│   │   └── IAccessPolicy.sol
 │   ├── vendor
 │   │   └── crontag-protocol
 │   │       ├── AccessPassV1.sol
 │   │       ├── AccessVerifierV1.sol
 │   │       └── ContextControllerV1.sol
-│   └── AccessPointV1.sol
+│   ├── AccessPolicy.sol
+│   ├── AccessPolicyStoreV1.sol
+│   └── IssuanceRouterV1.sol
 ├── docs
 │   ├── DESIGN-ACCESS-POINT.md
+│   ├── DESIGN-ACCESS-ROUTER.md
+│   ├── DESIGN-ISSUANCE-ROUTER.md
+│   ├── FLOWS-ISSUANCE.md
 │   └── REPO_TREE.md
 ├── ignition
 │   └── modules
 ├── scripts
 │   └── repo-tree.sh
 ├── test
-│   ├── access-point
+│   ├── access-policy
 │   │   ├── allow.test.ts
 │   │   ├── context-mismatch.test.ts
 │   │   ├── controller-mismatch.test.ts
@@ -30,9 +35,11 @@ Generated on: `Wed Jan 14 20:08:18 UTC 2026`
 │   │   ├── open-provenance.test.ts
 │   │   ├── tier-insufficient.test.ts
 │   │   └── tier-zero.test.ts
-│   └── helpers
-│       ├── setup.ts
-│       └── types.ts
+│   ├── helpers
+│   │   ├── setup.ts
+│   │   └── types.ts
+│   └── issuance-router
+│       └── issuance-router.test.ts
 ├── eslint.config.js
 ├── hardhat.config.ts
 ├── LICENSE
@@ -41,7 +48,7 @@ Generated on: `Wed Jan 14 20:08:18 UTC 2026`
 ├── README.md
 └── tsconfig.json
 
-12 directories, 24 files
+13 directories, 30 files
 ```
 
 ## Ignored Paths

@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { setupAccessPointFixture } from "../helpers/setup.js";
 import type { AccessPass, AccessPoint } from "../helpers/types.js";
 
-describe("AccessPointV1 — Expiration", () => {
-  it("denies access when the pass is expired", async () => {
+describe("AccessPointV1 — Tier Insufficient", () => {
+  it("denies access when the pass tier is below the required tier", async () => {
     const { ethers, owner, user, accessPass, controller, verifier } =
       await setupAccessPointFixture();
 
@@ -12,30 +12,31 @@ describe("AccessPointV1 — Expiration", () => {
       user,
     ) as unknown as AccessPass;
 
-    const contextId = ethers.keccak256(
-      ethers.toUtf8Bytes("event-expired-pass"),
-    );
+    const contextId = ethers.keccak256(ethers.toUtf8Bytes("event-tier-test"));
 
-    // ✅ Model C: context must be registered by the issuer
+    // ✅ Model C: context must be registered by issuer
     await controller.connect(owner).registerContext(contextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
+    // Require tier 2
     const accessPoint = (await AccessPointFactory.deploy(
       await accessPass.getAddress(),
       await verifier.getAddress(),
       contextId,
-      1, // requiredTier
+      2, // requiredTier
       await controller.getAddress(),
     )) as unknown as AccessPoint;
 
-    // Expired in the past
-    const expiresAt = BigInt(Math.floor(Date.now() / 1000)) - 10n;
+    const expiresAt = BigInt(Math.floor(Date.now() / 1000)) + 3600n;
 
+    // Mint a tier-1 pass (insufficient)
     const tx = await userAccessPass.mint(
       contextId,
       expiresAt,
-      2, // tier sufficient
+      1, // tier < requiredTier
       false,
       await controller.getAddress(),
     );

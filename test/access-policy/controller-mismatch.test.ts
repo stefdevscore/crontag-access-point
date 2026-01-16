@@ -28,7 +28,9 @@ describe("AccessPointV1 — Controller Provenance", () => {
     await controller.connect(owner).registerContext(contextId);
     await otherController.connect(owner).registerContext(contextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
     // AccessPoint trusts ONLY `controller`
     const accessPoint = (await AccessPointFactory.deploy(

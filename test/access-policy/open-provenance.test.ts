@@ -19,7 +19,9 @@ describe("AccessPointV1 — Open Provenance", () => {
     // ✅ Model C: issuer must register the context
     await controller.connect(owner).registerContext(contextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
     // requiredController = address(0) → provenance NOT enforced
     const accessPoint = (await AccessPointFactory.deploy(

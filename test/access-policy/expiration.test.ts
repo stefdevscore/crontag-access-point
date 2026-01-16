@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { setupAccessPointFixture } from "../helpers/setup.js";
 import type { AccessPass, AccessPoint } from "../helpers/types.js";
 
-describe("AccessPointV1 — Tier Zero", () => {
-  it("allows access when requiredTier is zero and pass tier is zero", async () => {
+describe("AccessPointV1 — Expiration", () => {
+  it("denies access when the pass is expired", async () => {
     const { ethers, owner, user, accessPass, controller, verifier } =
       await setupAccessPointFixture();
 
@@ -12,29 +12,32 @@ describe("AccessPointV1 — Tier Zero", () => {
       user,
     ) as unknown as AccessPass;
 
-    const contextId = ethers.keccak256(ethers.toUtf8Bytes("event-tier-zero"));
+    const contextId = ethers.keccak256(
+      ethers.toUtf8Bytes("event-expired-pass"),
+    );
 
-    // ✅ Model C: issuer must register the context
+    // ✅ Model C: context must be registered by the issuer
     await controller.connect(owner).registerContext(contextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
-    // requiredTier = 0 → no tier requirement
     const accessPoint = (await AccessPointFactory.deploy(
       await accessPass.getAddress(),
       await verifier.getAddress(),
       contextId,
-      0, // requiredTier
+      1, // requiredTier
       await controller.getAddress(),
     )) as unknown as AccessPoint;
 
-    const expiresAt = BigInt(Math.floor(Date.now() / 1000)) + 3600n;
+    // Expired in the past
+    const expiresAt = BigInt(Math.floor(Date.now() / 1000)) - 10n;
 
-    // Mint tier-0 pass
     const tx = await userAccessPass.mint(
       contextId,
       expiresAt,
-      0,
+      2, // tier sufficient
       false,
       await controller.getAddress(),
     );
@@ -44,6 +47,6 @@ describe("AccessPointV1 — Tier Zero", () => {
 
     const allowed = await accessPoint.canAccess(user.address, tokenId);
 
-    expect(allowed).to.equal(true);
+    expect(allowed).to.equal(false);
   });
 });

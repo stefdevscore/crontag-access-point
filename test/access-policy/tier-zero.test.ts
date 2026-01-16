@@ -2,8 +2,8 @@ import { expect } from "chai";
 import { setupAccessPointFixture } from "../helpers/setup.js";
 import type { AccessPass, AccessPoint } from "../helpers/types.js";
 
-describe("AccessPointV1 — Tier Insufficient", () => {
-  it("denies access when the pass tier is below the required tier", async () => {
+describe("AccessPointV1 — Tier Zero", () => {
+  it("allows access when requiredTier is zero and pass tier is zero", async () => {
     const { ethers, owner, user, accessPass, controller, verifier } =
       await setupAccessPointFixture();
 
@@ -12,29 +12,31 @@ describe("AccessPointV1 — Tier Insufficient", () => {
       user,
     ) as unknown as AccessPass;
 
-    const contextId = ethers.keccak256(ethers.toUtf8Bytes("event-tier-test"));
+    const contextId = ethers.keccak256(ethers.toUtf8Bytes("event-tier-zero"));
 
-    // ✅ Model C: context must be registered by issuer
+    // ✅ Model C: issuer must register the context
     await controller.connect(owner).registerContext(contextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
-    // Require tier 2
+    // requiredTier = 0 → no tier requirement
     const accessPoint = (await AccessPointFactory.deploy(
       await accessPass.getAddress(),
       await verifier.getAddress(),
       contextId,
-      2, // requiredTier
+      0, // requiredTier
       await controller.getAddress(),
     )) as unknown as AccessPoint;
 
     const expiresAt = BigInt(Math.floor(Date.now() / 1000)) + 3600n;
 
-    // Mint a tier-1 pass (insufficient)
+    // Mint tier-0 pass
     const tx = await userAccessPass.mint(
       contextId,
       expiresAt,
-      1, // tier < requiredTier
+      0,
       false,
       await controller.getAddress(),
     );
@@ -44,6 +46,6 @@ describe("AccessPointV1 — Tier Insufficient", () => {
 
     const allowed = await accessPoint.canAccess(user.address, tokenId);
 
-    expect(allowed).to.equal(false);
+    expect(allowed).to.equal(true);
   });
 });

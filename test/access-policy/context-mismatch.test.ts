@@ -24,7 +24,9 @@ describe("AccessPointV1 — Context Mismatch", () => {
     await controller.connect(owner).registerContext(correctContextId);
     await controller.connect(owner).registerContext(wrongContextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
     const accessPoint = (await AccessPointFactory.deploy(
       await accessPass.getAddress(),

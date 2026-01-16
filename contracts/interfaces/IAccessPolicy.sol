@@ -2,12 +2,12 @@
 pragma solidity ^0.8.28;
 
 /**
- * @title IAccessPoint
+ * @title IAccessPolicy
  *
  * @notice
- * Minimal interface for access enforcement.
+ * Minimal interface for access policy evaluation.
  *
- * An access point answers one question only:
+ * An access policy answers one question only:
  *
  *   “Should this account be allowed access here, right now?”
  *
@@ -23,11 +23,14 @@ pragma solidity ^0.8.28;
  * - explain reasons
  * - discover or select tokens
  * - assert legitimacy or authority
+ *
+ * This interface represents a **pure policy leaf**.
+ * Storage, routing, aggregation, and UX concerns live elsewhere.
  */
-interface IAccessPoint {
+interface IAccessPolicy {
   /**
    * @notice
-   * Determine whether `user` should be allowed access
+   * Evaluate whether `user` should be granted access
    * using the supplied access pass.
    *
    * @param user     Address attempting access

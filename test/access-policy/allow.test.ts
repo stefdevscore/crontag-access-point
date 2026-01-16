@@ -17,7 +17,9 @@ describe("AccessPointV1 — Allow Path", () => {
     // ✅ Model C: issuer must explicitly register the context
     await controller.connect(owner).registerContext(contextId);
 
-    const AccessPointFactory = await ethers.getContractFactory("AccessPointV1");
+    const AccessPointFactory = await ethers.getContractFactory(
+      "AccessPolicyV1",
+    );
 
     const accessPoint = (await AccessPointFactory.deploy(
       await accessPass.getAddress(),
